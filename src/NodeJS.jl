@@ -27,7 +27,7 @@ end
 Return the full path of the npm command.
 """
 function npm_cmd()
-    return Cmd(`$(nodejs_cmd()) $(npm_script())`)
+    return Sys.iswindows() ? Cmd(`$npm_executable_path`) : Cmd(`$(nodejs_cmd()) $(npm_script())`)
 end
 
 

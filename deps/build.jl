@@ -1,4 +1,4 @@
-const nodejs_version = v"10.15.0"
+const nodejs_version = v"10.16.0"
 basedir = @__DIR__
 
 if Sys.islinux()
@@ -48,8 +48,10 @@ base_url = "https://nodejs.org/dist/v$nodejs_version"
 
 @static if Sys.iswindows()
     binary_name = "node.exe"
+    npm_binary_name = "npm.cmd"
 else
     binary_name = "node"
+    npm_binary_name = "npm"
 end
 
 binary_target_path = Sys.iswindows() ? joinpath(install_folder, binary_name) : joinpath(install_folder, "bin", binary_name)
@@ -88,12 +90,14 @@ if !isfile(binary_target_path)
     end
 end
 
-npm_script_target_path = Sys.iswindows() ? joinpath(install_folder, "node_modules", "npm", "bin", "npm-cli.js") : joinpath(install_folder, "lib", "node_modules", "npm", "bin", "npm-cli.js")
+npm_script_target_path = Sys.iswindows() ? joinpath(install_folder, "node_modules", "npm", "bin", "npm-cli.js") : joinpath(install_folder, "bin", "npm")
+npm_executable_path = Sys.iswindows() ? joinpath(install_folder, npm_binary_name) : joinpath(install_folder, "bin", npm_binary_name)
 
 open(joinpath(dirname(@__FILE__), "deps.jl"), "w") do f
     write(f, """
 const node_executable_path = "$(escape_string(binary_target_path))"
 const npm_script_path = "$(escape_string(npm_script_target_path))"
+const npm_executable_path = "$(escape_string(npm_executable_path))"
 """)
 
 end
